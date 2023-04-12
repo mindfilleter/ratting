@@ -1,18 +1,18 @@
 function Player ()
    local self = Sprite()
    local super_update = self.update
-   
-   self.position = Vec2(0.0, 0.0)
-   self.speed = Vec2(0.0, 0.0)
-   self.max_speed = 1.0
-   self.rect.h = 16
 
+   self.w = 8
    self.h = 16
+   self.sx = 0
+   self.sy = 0
+   self.max_s = 1
+
    self.framesets = {
       n={67, 68, 67, 69},
-      e={},
+      e={73, 74, 73, 75},
       s={64, 65, 64, 66},
-      w={}
+      w={70, 71, 70, 72}
    }
    self.frame_delay = 0
    self.frames = self.framesets.s
@@ -27,21 +27,23 @@ function Player ()
 
    function process_input()
       if btn(0) then
-         self.speed.x = -self.max_speed
+         self.sx = -self.max_s
+         self.frames = self.framesets.w
       elseif btn(1) then
-         self.speed.x = self.max_speed
+         self.sx = self.max_s
+         self.frames = self.framesets.e
       else
-         self.speed.x = 0.0
+         self.sx = 0.0
       end
 
       if btn(2) then
-         self.speed.y = -self.max_speed
+         self.sy = -self.max_s
          self.frames = self.framesets.n
       elseif btn(3) then
-         self.speed.y = self.max_speed
+         self.sy = self.max_s
          self.frames = self.framesets.s         
       else
-         self.speed.y = 0.0
+         self.sy = 0.0
       end
    end
 
@@ -51,21 +53,21 @@ function Player ()
    end
 
    function process_horizontal_movement()
-      if self.speed.x ~= 0 then
-         self.position.x = self.position.x + self.speed.x
+      if self.sx ~= 0 then
+         self.x = self.x + self.sx
          if self.in_wall() then
-            self.position.x = self.old_position.x
-            self.speed.x = 0
+            self.x = self.ox
+            self.sx = 0
          end
       end
    end
 
    function process_vertical_movement()
-      if self.speed.y ~= 0 then
-         self.position.y = self.position.y + self.speed.y
+      if self.sy ~= 0 then
+         self.y = self.y + self.sy
          if self.in_wall() then
-            self.position.y = self.old_position.y
-            self.speed.y = 0
+            self.y = self.oy
+            self.sy = 0
          end
       end
    end
@@ -87,12 +89,23 @@ function Player ()
    end
 
    function is_moving()
-      return self.speed.x ~= 0 or self.speed.y ~= 0
+      return self.sx ~= 0 or self.sy ~= 0
    end
 
    function self.draw()
-      spr(self.frames[self.current_frame], self.position.x, self.position.y)
-      spr(self.frames[self.current_frame] + 16, self.position.x, self.position.y + 8)
+      spr(self.frames[self.current_frame], self.x, self.y)
+      spr(self.frames[self.current_frame] + 16, self.x, self.y + 8)
+   end
+
+   function self.in_wall()
+      t = (self.y + 8) \ 8
+      l = self.x \ 8
+      b = ((self.y + 8) + ((self.h \ 2) - 1)) \ 8
+      r = (self.x + (self.w - 1)) \ 8
+      return fget(mget(l, t), 0)
+         or fget(mget(r, t), 0)
+         or fget(mget(l, b), 0)
+         or fget(mget(r, b), 0)      
    end
 
    return self

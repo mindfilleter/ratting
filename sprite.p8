@@ -1,27 +1,20 @@
 function Sprite ()
    local self = {
-      position = Vec2(0, 0),
-      rect = Rect(0, 0, 8, 8),
-      old_position = Vec2(0, 0),
+      x = 0,
+      y = 0,
+      w = 0,
+      h = 0,
+      ox = 0,
+      oy = 0,
    }
 
    function self.update()
-      self.old_position.x = self.position.x
-      self.old_position.y = self.position.y
-      self.rect.x = self.position.x
-      self.rect.y = self.position.y
+      self.ox = self.x
+      self.oy = self.y
    end
 
-   function self.in_wall()
-      rect = self.rect
-      t = rect.t() \ 8
-      l = rect.l() \ 8
-      b = rect.b() \ 8
-      r = rect.r() \ 8
-      return fget(mget(l, t), 0)
-         or fget(mget(r, t), 0)
-         or fget(mget(l, b), 0)
-         or fget(mget(r, b), 0)      
+   function self.get_center()
+      return {x=self.x + (self.w \ 2), y=self.y + (self.h \ 2)}
    end
 
    return self

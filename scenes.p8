@@ -27,8 +27,8 @@ function MapScene(game)
    local self = Scene(game)
 
    self.player = Player()
-   self.player.position.x = 8
-   self.player.position.y = 8
+   self.player.x = 8
+   self.player.y = 8
    self.sprites = {self.player}
    self.focus = self.player
 
@@ -41,8 +41,8 @@ function MapScene(game)
    function self.draw ()
       cls()
       if self.focus then
-         rect = self.focus.rect
-         camera(rect.cx() - HALF_SIZE, rect.cy() - HALF_SIZE)
+         center = self.focus.get_center()
+         camera(center.x - HALF_SIZE, center.y - HALF_SIZE)
       end
       map(0, 0)
       for _, sprite in pairs(self.sprites) do
